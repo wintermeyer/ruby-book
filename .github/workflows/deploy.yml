@@ -9,12 +9,12 @@ permissions:
 
 jobs:
   deploy:
-    # Dedicated self-hosted runner on bremen2 under the `eliph`
+    # Dedicated self-hosted runner on bremen2 under the `books`
     # user, service actions.runner.wintermeyer-ruby-book.
-    # bremen2-eliph-ruby-book. Shares the eliph label with the
+    # bremen2-eliph-ruby-book. Shares the books label with the
     # Phoenix / Rails / Elixir book runners; each is pinned to
     # its own repo.
-    runs-on: [self-hosted, eliph]
+    runs-on: [self-hosted, books]
 
     steps:
       - uses: actions/checkout@v4

@@ -3,7 +3,7 @@
 # /var/www/ruby-book/releases/<timestamp>/ and atomically swap
 # the `current` symlink.
 #
-# Runs on the `eliph` self-hosted GitHub Actions runner dedicated
+# Runs on the `books` self-hosted GitHub Actions runner dedicated
 # to this repo (bremen2-eliph-ruby-book). Invoked from the
 # actions/checkout workdir as `./scripts/deploy.sh`.
 
