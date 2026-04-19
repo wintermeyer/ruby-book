@@ -107,4 +107,195 @@ elsif a == 20
 end
 ----
 
+[[logical-operators]]
+== Logical Operators
+
+So far the conditions in our examples have been simple: `a == 10`. In
+real code you often want to combine several conditions. Ruby gives you
+three operators for that:
+
+[cols="1,3"]
+|===
+| `&&` | _and_, true if both sides are true
+| `\|\|` | _or_, true if at least one side is true
+| `!`  | _not_, flips true into false and vice versa
+|===
+
+[source,bash]
+----
+$ irb
+>> true && true
+=> true
+>> true && false
+=> false
+>> true || false
+=> true
+>> !true
+=> false
+>> exit
+----
+
+Used in an `if`:
+
+[source,ruby]
+----
+age = 20
+country = 'DE'
+
+if age >= 18 && country == 'DE'
+  puts 'may buy beer in Germany'
+end
+----
+
+A handy idiom: `||` returns the first value that is not `false` or
+`nil`. That lets you supply a default:
+
+[source,bash]
+----
+$ irb
+>> name = nil
+=> nil
+>> display_name = name || 'Anonymous'
+=> "Anonymous"
+>> name = 'Stefan'
+=> "Stefan"
+>> display_name = name || 'Anonymous'
+=> "Stefan"
+>> exit
+----
+
+[NOTE]
+====
+Ruby also has `and`, `or` and `not` as word forms. They look
+friendlier but have a much lower precedence than `&&`, `||` and `!`,
+which makes them surprising in practice. The community convention is
+to stick with the symbol forms.
+====
+
+[[case-when]]
+== case / when
+
+A long chain of `if` / `elsif` / `elsif` works, but gets hard to read.
+`case` / `when` expresses the same idea more cleanly when you compare
+one value against many possibilities.
+
+[source,ruby]
+.traffic-light.rb
+----
+light = 'yellow'
+
+case light
+when 'red'
+  puts 'stop'
+when 'yellow'
+  puts 'slow down'
+when 'green'
+  puts 'go'
+else
+  puts 'unknown color'
+end
+----
+
+[source,bash]
+----
+$ ruby traffic-light.rb
+slow down
+$
+----
+
+`case` returns a value too, so you can assign its result directly:
+
+[source,bash]
+----
+$ irb
+>> light = 'green'
+=> "green"
+>> action = case light
+?>            when 'red'    then 'stop'
+?>            when 'yellow' then 'slow down'
+?>            when 'green'  then 'go'
+?>          end
+=> "go"
+>> action
+=> "go"
+>> exit
+----
+
+`when` is more powerful than plain equality. It also understands
+ranges and classes:
+
+[source,ruby]
+.grade.rb
+----
+score = 72
+
+grade = case score
+        when 0..59   then 'F'
+        when 60..69  then 'D'
+        when 70..79  then 'C'
+        when 80..89  then 'B'
+        when 90..100 then 'A'
+        end
+
+puts grade
+----
+
+[source,bash]
+----
+$ ruby grade.rb
+C
+$
+----
+
+[[safe-navigation]]
+== Safe Navigation with `&.`
+
+When you call a method on `nil`, Ruby raises a `NoMethodError`:
+
+[source,bash]
+----
+$ irb
+>> name = nil
+=> nil
+>> name.upcase
+NoMethodError (undefined method 'upcase' for nil)
+>> exit
+----
+
+Sometimes you expect a value to possibly be missing and you simply
+want the whole chain to shrug and return `nil`. The _safe navigation
+operator_ `&.` does exactly that: call the method if the receiver is
+not `nil`, otherwise return `nil`.
+
+[source,bash]
+----
+$ irb
+>> name = nil
+=> nil
+>> name&.upcase
+=> nil
+>> name = 'stefan'
+=> "stefan"
+>> name&.upcase
+=> "STEFAN"
+>> exit
+----
+
+This is very common in Rails, where database lookups routinely return
+`nil` for missing records:
+
+[source,ruby]
+----
+# without safe navigation
+if user && user.address && user.address.city
+  puts user.address.city
+end
+
+# with safe navigation
+puts user&.address&.city
+----
+
+The second form reads like a single thought and does not fall apart
+if any piece in the chain is missing.
+
 [[loops]]

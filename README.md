@@ -3,11 +3,34 @@
 Source for the standalone Ruby book at
 <https://wintermeyer-consulting.de/ruby/book/>.
 
-Content was lifted from the Ruby Introduction chapter of
+The initial content was lifted from the Ruby Introduction chapter of
 [_Learn Ruby on Rails_](https://github.com/wintermeyer/rails-book)
 and split page-per-section so each topic has its own URL. The Rails
 book used to render the same text at
 `/rails/book/ruby-basics.html`; that URL now 301-redirects here.
+
+The book has since grown beyond the original Rails chapter. It now
+also covers: more String and Hash methods, Symbols, logical
+operators, `case/when`, safe navigation `&.`, keyword arguments,
+multiple assignment and the splat operator, blocks/Procs/Lambdas,
+regular expressions, modules and mixins, and Date/Time.
+
+## Chapters
+
+1. Welcome
+2. Ruby 4.0
+3. Basics
+4. Ruby is Object-Oriented
+5. Basic Classes (String, Symbol, Numbers, Boolean, nil)
+6. Variables
+7. Methods Once Again (method chaining, getters/setters, keyword args, splat, blocks)
+8. if-Condition (if/elsif/else, logical operators, case/when, safe navigation)
+9. Loops
+10. Arrays and Hashes
+11. Range
+12. Regular Expressions
+13. Modules and Mixins
+14. Date and Time
 
 ## Build
 

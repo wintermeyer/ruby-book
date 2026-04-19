@@ -139,6 +139,180 @@ $ irb
 >> exit
 ----
 
+[[more-useful-string-methods]]
+=== More Useful String Methods
+
+The list above is long. In practice you reach for the same handful of
+methods again and again. Here they are, grouped by what you typically
+want to do.
+
+*Cutting a string into pieces with `split`*:
+
+[source,bash]
+----
+$ irb
+>> 'one,two,three'.split(',')
+=> ["one", "two", "three"]
+>> 'one two  three'.split
+=> ["one", "two", "three"]
+>> exit
+----
+
+Without an argument, `split` cuts at whitespace and collapses multiple
+spaces.
+
+*Replacing parts of a string with `sub` and `gsub`*:
+
+`sub` replaces the first match, `gsub` replaces all of them.
+
+[source,bash]
+----
+$ irb
+>> 'Hello World'.sub('World', 'Ruby')
+=> "Hello Ruby"
+>> 'aaaa'.sub('a', 'b')
+=> "baaa"
+>> 'aaaa'.gsub('a', 'b')
+=> "bbbb"
+>> exit
+----
+
+*Cleaning up whitespace with `strip`, `chomp` and friends*:
+
+[source,bash]
+----
+$ irb
+>> "   hello   \n".strip
+=> "hello"
+>> "hello\n".chomp
+=> "hello"
+>> "   hello".lstrip
+=> "hello"
+>> "hello   ".rstrip
+=> "hello"
+>> exit
+----
+
+`strip` removes whitespace on both ends, `lstrip` only on the left,
+`rstrip` only on the right, and `chomp` removes a trailing newline
+(very handy after reading input from a user).
+
+*Asking questions about a string*:
+
+Methods that end with a question mark return `true` or `false`. This
+is a Ruby convention, not a special syntax.
+
+[source,bash]
+----
+$ irb
+>> 'Hello World'.include?('World')
+=> true
+>> 'Hello World'.start_with?('Hello')
+=> true
+>> 'example.rb'.end_with?('.rb')
+=> true
+>> ''.empty?
+=> true
+>> exit
+----
+
+*Converting to and from other types*:
+
+[source,bash]
+----
+$ irb
+>> '42'.to_i
+=> 42
+>> '3.14'.to_f
+=> 3.14
+>> 42.to_s
+=> "42"
+>> 'abc'.to_i
+=> 0
+>> exit
+----
+
+Note the last line: `to_i` on a string that does not start with digits
+returns `0` rather than raising an error. That bites beginners, so
+keep it in mind.
+
+[[string-escape-sequences]]
+=== String Escape Sequences
+
+Inside double quoted strings a backslash starts an _escape sequence_.
+The most common ones are:
+
+[cols="1,3"]
+|===
+| `\n` | newline
+| `\t` | tab
+| `\\` | a single backslash
+| `\"` | a literal double quote
+| `\#` | a literal `#` (stops interpolation)
+|===
+
+[source,bash]
+----
+$ irb
+>> puts "line one\nline two"
+line one
+line two
+=> nil
+>> puts "name:\tStefan"
+name:   Stefan
+=> nil
+>> exit
+----
+
+Single quoted strings ignore most escape sequences. Only `\\` and `\'`
+have a special meaning there:
+
+[source,bash]
+----
+$ irb
+>> puts 'line one\nline two'
+line one\nline two
+=> nil
+>> exit
+----
+
+If you want interpolation or escape sequences, use double quotes.
+Otherwise single quotes are a touch faster and make your intent
+clearer.
+
+[[symbols-intro]]
+== Symbols
+
+A `Symbol` is a name preceded by a colon: `:name`, `:doors`, `:red`.
+Symbols look a bit like strings, but they behave differently: for any
+given name, Ruby creates _exactly one_ symbol object and reuses it
+forever.
+
+[source,bash]
+----
+$ irb
+>> :example.class
+=> Symbol
+>> :example.object_id
+=> 1088668
+>> :example.object_id
+=> 1088668
+>> 'example'.object_id
+=> 70124141350360
+>> 'example'.object_id
+=> 70124141316700
+>> exit
+----
+
+The symbol `:example` keeps the same object ID. The string
+`'example'` gets a fresh object every time. That makes symbols cheap
+to compare and memory friendly, which is why Ruby uses them for names
+and labels: method names, hash keys, option flags.
+
+You will meet them again in the Hash chapter and in
+`attr_reader :name` later on. For now, remember: symbols are names
+that Ruby keeps around for you.
+
 [[numbers]]
 == Numbers
 

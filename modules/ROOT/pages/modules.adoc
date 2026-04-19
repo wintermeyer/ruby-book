@@ -1,0 +1,237 @@
+[[modules]]
+= Modules and Mixins
+
+A _module_ is a bit like a class, but you cannot create instances of
+it. Modules do two jobs in Ruby:
+
+1. They group related methods and constants together so names do not
+   collide (a _namespace_).
+2. They bundle methods that several classes want to share (a
+   _mixin_).
+
+Both are useful. Rails uses them heavily.
+
+[[module-as-namespace]]
+== A Module as a Namespace
+
+Suppose you write two small classes called `Animal`, one for a zoo
+app and one for a physics simulation. Without namespaces they would
+clash. Modules fix that:
+
+[source,ruby]
+.zoo-and-physics.rb
+----
+module Zoo
+  class Animal
+    def greet
+      puts 'Roar!'
+    end
+  end
+end
+
+module Physics
+  class Animal
+    def greet
+      puts 'I am a test subject.'
+    end
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './zoo-and-physics.rb'
+=> true
+>> Zoo::Animal.new.greet
+Roar!
+=> nil
+>> Physics::Animal.new.greet
+I am a test subject.
+=> nil
+>> exit
+----
+
+The `::` is the _scope resolution operator_. It tells Ruby "look
+inside this module". `Math::PI` and `Float::INFINITY` use the same
+idea.
+
+You can also put plain methods and constants in a module:
+
+[source,ruby]
+.geometry.rb
+----
+module Geometry
+  PI = 3.14159
+
+  def self.area_of_circle(radius)
+    PI * radius * radius
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './geometry.rb'
+=> true
+>> Geometry::PI
+=> 3.14159
+>> Geometry.area_of_circle(10)
+=> 314.159
+>> exit
+----
+
+Module methods defined with `self.` are called directly on the
+module, like class methods.
+
+[[module-as-mixin]]
+== A Module as a Mixin
+
+Sometimes two unrelated classes need the same behavior. A `Dog` and a
+`Parrot` both make sounds, but one does not inherit from the other. A
+mixin lets you share methods across unrelated classes.
+
+Define the shared behavior in a module, then pull it into a class
+with `include`:
+
+[source,ruby]
+.sounds.rb
+----
+module Sound
+  def speak
+    puts "#{self.class}: #{sound}"
+  end
+end
+
+class Dog
+  include Sound
+
+  def sound
+    'Woof!'
+  end
+end
+
+class Parrot
+  include Sound
+
+  def sound
+    'Squawk!'
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './sounds.rb'
+=> true
+>> Dog.new.speak
+Dog: Woof!
+=> nil
+>> Parrot.new.speak
+Parrot: Squawk!
+=> nil
+>> exit
+----
+
+Both classes got the `speak` method by including `Sound`. Neither
+inherits from the other.
+
+[[include-vs-extend]]
+== include vs extend
+
+- `include` adds the module's methods as _instance_ methods. Every
+  new object of the class has them.
+- `extend` adds them as _class_ methods. They are called on the class
+  itself.
+
+[source,ruby]
+.greeter.rb
+----
+module Greeter
+  def hello
+    'Hello!'
+  end
+end
+
+class Friendly
+  include Greeter
+end
+
+class Businesslike
+  extend Greeter
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './greeter.rb'
+=> true
+>> Friendly.new.hello
+=> "Hello!"
+>> Businesslike.hello
+=> "Hello!"
+>> Friendly.hello
+NoMethodError
+>> Businesslike.new.hello
+NoMethodError
+>> exit
+----
+
+`include` is by far the more common choice.
+
+[[standard-mixins]]
+== Standard Library Mixins
+
+Ruby ships with two mixins you will see over and over: `Comparable`
+and `Enumerable`.
+
+*`Comparable`*: define the spaceship operator `<=>` on your class and
+you get `<`, `<=`, `==`, `>=`, `>`, and `between?` for free.
+
+[source,ruby]
+.weight.rb
+----
+class Weight
+  include Comparable
+
+  attr_reader :kg
+
+  def initialize(kg)
+    @kg = kg
+  end
+
+  def <=>(other)
+    kg <=> other.kg
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './weight.rb'
+=> true
+>> small = Weight.new(2)
+=> #<Weight @kg=2>
+>> big = Weight.new(10)
+=> #<Weight @kg=10>
+>> small < big
+=> true
+>> big.between?(Weight.new(5), Weight.new(15))
+=> true
+>> exit
+----
+
+*`Enumerable`*: define an `each` method on your class and include
+`Enumerable`, and you get `map`, `select`, `count`, `min`, `max`,
+`include?`, and many more.
+
+NOTE: The `Array` class itself includes `Enumerable`. That is why
+      `[1,2,3].map { |n| n * 2 }` works. Once you understand
+      modules, a lot of Ruby's "magic" turns out to be a short list
+      of well-named mixins.
+
+[[date-time]]

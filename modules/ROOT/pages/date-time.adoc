@@ -1,0 +1,207 @@
+[[date-time]]
+= Date and Time
+
+Ruby has three classes for working with moments in time:
+
+- `Time` is built in and represents a point in time (date plus time
+  of day).
+- `Date` represents a calendar date without a time.
+- `DateTime` combines both and is nowadays rarely needed.
+
+`Time` is available out of the box. For `Date` you need to add
+`require 'date'` at the top of your program or your irb session.
+
+[[time-now]]
+== Time.now
+
+`Time.now` returns the current moment:
+
+[source,bash]
+----
+$ irb
+>> Time.now
+=> 2026-04-19 14:23:11 +0200
+>> Time.now.class
+=> Time
+>> exit
+----
+
+You can ask a `Time` object for its parts:
+
+[source,bash]
+----
+$ irb
+>> t = Time.now
+=> 2026-04-19 14:23:11 +0200
+>> t.year
+=> 2026
+>> t.month
+=> 4
+>> t.day
+=> 19
+>> t.hour
+=> 14
+>> t.min
+=> 23
+>> t.sec
+=> 11
+>> t.wday
+=> 0
+>> exit
+----
+
+`wday` is the day of the week as a number, Sunday being 0.
+
+[[date-today]]
+== Date.today
+
+For calendar work without a time of day, use `Date`:
+
+[source,bash]
+----
+$ irb
+>> require 'date'
+=> true
+>> Date.today
+=> #<Date: 2026-04-19>
+>> Date.today.class
+=> Date
+>> Date.new(2026, 12, 24)
+=> #<Date: 2026-12-24>
+>> exit
+----
+
+[[arithmetic]]
+== Arithmetic
+
+Time arithmetic works in _seconds_:
+
+[source,bash]
+----
+$ irb
+>> now = Time.now
+=> 2026-04-19 14:23:11 +0200
+>> now + 60
+=> 2026-04-19 14:24:11 +0200
+>> now + 3600
+=> 2026-04-19 15:23:11 +0200
+>> now - 86400
+=> 2026-04-18 14:23:11 +0200
+>> exit
+----
+
+So `+ 60` moves one minute forward, `+ 3600` one hour, `+ 86400` one
+day.
+
+Subtracting two `Time` values gives you the gap between them in
+seconds:
+
+[source,bash]
+----
+$ irb
+>> start_time = Time.now
+=> 2026-04-19 14:23:11 +0200
+>> 3.times { 1_000_000.times { } }
+=> 3
+>> elapsed = Time.now - start_time
+=> 0.142857
+>> exit
+----
+
+`Date` arithmetic works in _days_:
+
+[source,bash]
+----
+$ irb
+>> require 'date'
+=> true
+>> today = Date.today
+=> #<Date: 2026-04-19>
+>> today + 7
+=> #<Date: 2026-04-26>
+>> today - 30
+=> #<Date: 2026-03-20>
+>> (Date.new(2026, 12, 25) - today).to_i
+=> 250
+>> exit
+----
+
+That last line answers "how many days until Christmas?".
+
+[[strftime]]
+== Formatting with strftime
+
+`Time.now` and `Date.today` print in Ruby's default format. Real
+applications usually need a specific layout. `strftime` ("string
+format time") turns a `Time` or `Date` into a formatted string. You
+give it a template with placeholders:
+
+[cols="1,3"]
+|===
+| `%Y` | four digit year (2026)
+| `%m` | month, zero padded (04)
+| `%d` | day of month, zero padded (19)
+| `%H` | hour, 24-hour, zero padded (14)
+| `%M` | minute, zero padded (23)
+| `%S` | second, zero padded (11)
+| `%A` | weekday name (Sunday)
+| `%B` | month name (April)
+|===
+
+[source,bash]
+----
+$ irb
+>> t = Time.now
+=> 2026-04-19 14:23:11 +0200
+>> t.strftime('%Y-%m-%d')
+=> "2026-04-19"
+>> t.strftime('%d.%m.%Y')
+=> "19.04.2026"
+>> t.strftime('%H:%M')
+=> "14:23"
+>> t.strftime('%A, %B %d, %Y')
+=> "Sunday, April 19, 2026"
+>> exit
+----
+
+The same placeholders work on `Date` objects.
+
+[[parsing]]
+== Parsing Strings into Dates
+
+Going the other way, from a string to a `Date`, use `Date.parse`:
+
+[source,bash]
+----
+$ irb
+>> require 'date'
+=> true
+>> Date.parse('2026-04-19')
+=> #<Date: 2026-04-19>
+>> Date.parse('19.04.2026')
+=> #<Date: 2026-04-19>
+>> Date.parse('April 19, 2026')
+=> #<Date: 2026-04-19>
+>> exit
+----
+
+`Date.parse` is forgiving but also a little magical, so for untrusted
+input it is safer to spell out the format with `Date.strptime`:
+
+[source,bash]
+----
+$ irb
+>> require 'date'
+=> true
+>> Date.strptime('19.04.2026', '%d.%m.%Y')
+=> #<Date: 2026-04-19>
+>> exit
+----
+
+`Time` has the same pair: `Time.parse` (needs `require 'time'`) and
+`Time.strptime`.
+
+NOTE: In a Rails application you get even nicer helpers: `1.day`,
+      `3.hours.ago`, `2.weeks.from_now`, `Date.current`. Those come
+      from ActiveSupport, not from plain Ruby. Everything on this
+      page works without Rails.

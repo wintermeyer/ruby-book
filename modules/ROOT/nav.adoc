@@ -11,3 +11,6 @@
 * xref:loops.adoc[Loops]
 * xref:collections.adoc[Arrays and Hashes]
 * xref:ranges.adoc[Range]
+* xref:regex.adoc[Regular Expressions]
+* xref:modules.adoc[Modules and Mixins]
+* xref:date-time.adoc[Date and Time]

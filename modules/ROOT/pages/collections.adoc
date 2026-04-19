@@ -231,4 +231,100 @@ white #FFFFFF
 Again, `ri Hash.each` offers help and an example, in case you cannot remember one
 day how to use each.
 
+[[more-hash-methods]]
+=== More Useful Hash Methods
+
+A handful of Hash methods you will reach for all the time.
+
+*Reading a value safely with `fetch`*:
+
+`hash[key]` returns `nil` if the key is missing. `fetch` raises an
+error by default, which is often what you actually want. You can also
+pass a default:
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1, 'butter' => 0.99 }
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices['milk']
+=> nil
+>> prices.fetch('milk')
+KeyError (key not found: "milk")
+>> prices.fetch('milk', 1.20)
+=> 1.2
+>> exit
+----
+
+*Listing keys and values*:
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1, 'butter' => 0.99 }
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices.keys
+=> ["egg", "butter"]
+>> prices.values
+=> [0.1, 0.99]
+>> prices.size
+=> 2
+>> exit
+----
+
+*Asking questions*:
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1, 'butter' => 0.99 }
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices.include?('egg')
+=> true
+>> prices.include?('milk')
+=> false
+>> prices.empty?
+=> false
+>> {}.empty?
+=> true
+>> exit
+----
+
+*Adding, updating and deleting*:
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1 }
+=> {"egg"=>0.1}
+>> prices['butter'] = 0.99
+=> 0.99
+>> prices
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices['egg'] = 0.15
+=> 0.15
+>> prices.delete('egg')
+=> 0.15
+>> prices
+=> {"butter"=>0.99}
+>> exit
+----
+
+*Merging two hashes*:
+
+[source,bash]
+----
+$ irb
+>> defaults = { color: 'white', size: 'M' }
+=> {:color=>"white", :size=>"M"}
+>> overrides = { color: 'red' }
+=> {:color=>"red"}
+>> defaults.merge(overrides)
+=> {:color=>"red", :size=>"M"}
+>> exit
+----
+
+`merge` returns a new hash. The original is untouched. Values in the
+second hash win.
+
 [[range]]
