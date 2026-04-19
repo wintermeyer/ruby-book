@@ -4,7 +4,7 @@ Source for the standalone Ruby book at
 <https://wintermeyer-consulting.de/ruby/book/>.
 
 Content was lifted from the Ruby Introduction chapter of
-[_Learn Ruby on Rails_](https://github.com/wintermeyer/learn-ruby-on-rails-book)
+[_Learn Ruby on Rails_](https://github.com/wintermeyer/rails-book)
 and split page-per-section so each topic has its own URL. The Rails
 book used to render the same text at
 `/rails/book/ruby-basics.html`; that URL now 301-redirects here.
