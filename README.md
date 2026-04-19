@@ -1,0 +1,42 @@
+# Ruby Introduction
+
+Source for the standalone Ruby book at
+<https://wintermeyer-consulting.de/ruby/book/>.
+
+Content was lifted from the Ruby Introduction chapter of
+[_Learn Ruby on Rails_](https://github.com/wintermeyer/learn-ruby-on-rails-book)
+and split page-per-section so each topic has its own URL. The Rails
+book used to render the same text at
+`/rails/book/ruby-basics.html`; that URL now 301-redirects here.
+
+## Build
+
+The book is built with [Antora](https://antora.org). The chrome
+(Tailwind v4 theme, sidebar, right TOC, pagination, mobile nav)
+comes from the shared UI bundle at
+[`wintermeyer/wincon-antora-ui`](https://github.com/wintermeyer/wincon-antora-ui).
+
+```sh
+npm install
+npx antora --fetch antora-local-playbook.yml
+```
+
+Open `build/site/book/index.html` to preview.
+
+## Deployment
+
+Pushing to `main` triggers `.github/workflows/deploy.yml`, which
+runs on the self-hosted runner `bremen2-eliph-ruby-book` on
+bremen2. The runner fetches the wincon nav/footer (stamping
+`data-book-current="ruby"`), renders with Antora, copies into
+`/var/www/ruby-book/releases/<ts>/`, and atomically swaps the
+`current` symlink. Nginx serves `/ruby/book/` from there.
+
+## Where the content is edited
+
+In this repo, under `modules/ROOT/pages/*.adoc`. The Rails book no
+longer has a Ruby chapter — this repo is the one source of truth.
+
+## License
+
+See individual files for attribution.

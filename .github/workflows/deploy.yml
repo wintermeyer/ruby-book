@@ -1,0 +1,23 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    # Dedicated self-hosted runner on bremen2 under the `eliph`
+    # user, service actions.runner.wintermeyer-ruby-book.
+    # bremen2-eliph-ruby-book. Shares the eliph label with the
+    # Phoenix / Rails / Elixir book runners; each is pinned to
+    # its own repo.
+    runs-on: [self-hosted, eliph]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy
+        run: ./scripts/deploy.sh
