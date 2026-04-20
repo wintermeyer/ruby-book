@@ -10,8 +10,19 @@ Shameless plug: if you'd rather have the training itself —
 personalized, on-site or remote — drop me an email at
 mailto:sw@wintermeyer-consulting.de[sw@wintermeyer-consulting.de].
 
-Ruby is easy to read but not a simple language. Ruby's creator,
-Yukihiro Matsumoto, put it best:
+Good news first: Ruby is one of the easier languages to learn.
+If this is your first programming language, the syntax reads
+almost like pseudo-code and you'll be writing useful little
+scripts sooner than you'd expect. Coming from another
+object-oriented language — Python, JavaScript, Java, C# — you
+will feel at home in an afternoon.
+
+The honest part: if object-oriented thinking itself is new to
+you (procedural C, or a functional-first language like Elixir
+or Haskell), plan for a week or two of "wait, what's an object,
+really?" before the pieces click into place. It's a small hill,
+and well worth the climb. Ruby's creator, Yukihiro Matsumoto,
+put the language's character this way:
 
 [quote, Yukihiro Matsumoto]
 It is easy to program in Ruby, but Ruby is not a simple language.
