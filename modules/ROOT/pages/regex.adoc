@@ -117,6 +117,64 @@ $ irb
 >> exit
 ----
 
+[.agentic-tip]
+****
+.Agentic Coding Tip: `^` / `$` Anchor to Line, Not String
+This is one of the most-missed points about Ruby regex, and
+an AI agent will almost always get it wrong on the first
+try. In Ruby, `^` matches the start of a _line_, not the
+start of the string. `$` matches the end of a line. This
+matters the moment the input can contain a newline.
+
+[source,bash]
+----
+$ irb
+>> "admin\nhacker".match?(/^admin$/)
+=> true
+>> exit
+----
+
+That string is not `admin`. It's `admin`, then a newline,
+then `hacker`. If you use `/^admin$/` to decide whether to
+grant privileges, an attacker who can inject a newline into
+the input has just bypassed your check.
+
+The anchors you almost always want are `\A` (start of
+string, ignoring newlines) and `\z` (end of string,
+likewise):
+
+[source,bash]
+----
+$ irb
+>> "admin\nhacker".match?(/\Aadmin\z/)
+=> false
+>> "admin".match?(/\Aadmin\z/)
+=> true
+>> exit
+----
+
+Claude will happily write `/^admin$/` for a validation
+because that's what the regex tutorial on the agent's
+training corpus showed. The resulting code passes every
+test a beginner writes, and is exploitable. This same
+trap is why Rails' `validates :email, format: { with:
+/\A[^@\s]+@[^@\s]+\z/ }` uses `\A` / `\z` rather than `^`
+/ `$`.
+
+*Rule to add to your project's `CLAUDE.md`:*
+
+[source]
+----
+When a Ruby regex is used for validation or authorization
+(as opposed to finding a pattern inside larger text), anchor
+with `\A` / `\z`, never `^` / `$`. `\A` / `\z` mean "start
+and end of the whole string." `^` / `$` mean "start and end
+of any line," which newlines in the input can bypass. Reserve
+`^` / `$` for text processing where line boundaries are the
+explicit intent.
+----
+****
+
 [[capture-groups]]
 == Capture Groups
 

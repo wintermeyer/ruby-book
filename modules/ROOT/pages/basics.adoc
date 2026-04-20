@@ -65,6 +65,58 @@ zzz
 Hello World!zzz
 ----
 
+[.agentic-tip]
+****
+.Agentic Coding Tip: Use `p` (or `pp`) for Debugging, Not `puts`
+When an AI agent debugs a piece of Ruby code, it reaches for
+`puts` because that's what the first tutorial introduces. For
+a plain string that is fine. For anything else it costs you
+information.
+
+Ruby ships three closely related methods:
+
+* `puts x` prints `x.to_s` — the human-friendly form.
+* `p x` prints `x.inspect` and returns `x` — the
+  Ruby-literal form.
+* `pp x` is `p` with pretty formatting for large
+  structures (arrays, hashes, nested objects).
+
+The difference matters when the value is a collection or a
+`nil`:
+
+[source,bash]
+----
+$ irb
+>> name = nil
+>> puts name
+# prints an empty line, so you can't tell if it was nil or ""
+>> p name
+nil
+>> value = { id: 42, name: "Ada" }
+>> puts value
+{:id=>42, :name=>"Ada"}
+>> p value
+{:id=>42, :name=>"Ada"}
+>> pp [{ id: 1, name: "A" }, { id: 2, name: "B" }]
+[{:id=>1, :name=>"A"}, {:id=>2, :name=>"B"}]
+----
+
+When you ask Claude to add a debug trace, `puts @user` will
+confidently print `#<User:0x00007f...>` and nothing useful.
+`p @user` or `pp @user` prints the attributes in a form you
+can actually read.
+
+*Rule to add to your project's `CLAUDE.md`:*
+
+[source]
+----
+For temporary debugging output in Ruby code, use `p` or `pp`
+rather than `puts`. `puts` is for user-visible program
+output; `p` / `pp` are for showing the Ruby value itself.
+Remove all debug `p` / `pp` calls before committing.
+----
+****
+
 [[comments]]
 == Comments
 

@@ -219,6 +219,58 @@ Note the last line: `to_i` on a string that does not start with
 digits returns `0` rather than raising an error. That bites
 beginners, so keep it in mind.
 
+[.agentic-tip]
+****
+.Agentic Coding Tip: Bang Methods Return `nil` on No Match
+Ruby convention: methods that end in `!` modify the receiver
+_in place_. You'll see `gsub!`, `upcase!`, `strip!`,
+`downcase!`, and many more. They look like they should return
+the modified string, and they usually do — except when there
+is nothing to modify, in which case they return `nil`.
+
+[source,bash]
+----
+$ irb
+>> 'hello'.gsub!('x', 'y')
+=> nil
+>> 'hello'.gsub!('h', 'H')
+=> "Hello"
+>> exit
+----
+
+This is the classic silent bug when an agent writes chained
+code:
+
+[source,ruby]
+----
+# Looks right. Returns nil if the input has no 'x'.
+cleaned = input.gsub!('x', '').downcase
+----
+
+That second call explodes with
+`NoMethodError: undefined method 'downcase' for nil` the
+moment `input` does not contain an `x`.
+
+*Rule to add to your project's `CLAUDE.md`:*
+
+[source]
+----
+Avoid bang-methods (`gsub!`, `upcase!`, `strip!`, `sub!`,
+etc.) in any expression where the result is used or chained.
+They return `nil` when no change was needed, which breaks
+subsequent method calls. Use the non-mutating version
+(`gsub`, `upcase`, `strip`) and assign the result, unless
+the mutation itself is the explicit goal and the return
+value is discarded.
+----
+
+The rule of thumb: if you would read the line as "clean this
+up and do something with the result," reach for the
+non-bang form. Keep bang methods for "I really want to
+change this object in place, here, now, and the caller
+doesn't care about the return value."
+****
+
 [[string-escape-sequences]]
 == Escape Sequences
 
