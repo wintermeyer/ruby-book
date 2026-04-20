@@ -1,13 +1,14 @@
 [[preface]]
 = Preface
 
-This chapter is a tightrope walk between oversimplification and a degree of
+This book is a tightrope walk between oversimplification and a degree of
 detail that is unnecessary for a Rails newbie. After all, the objective is not
-becoming a Ruby guru, but understanding Ruby on Rails. I am going to elaborate
-on the most important points. The rest is then up to you. If you would like to
-know more about Ruby, then I recommend the book "The Ruby Programming Language"
-by David Flanagan and https://en.wikipedia.org/wiki/Yukihiro_Matsumoto[Yukihiro
-Matsumoto].
+becoming a Ruby guru, but understanding Ruby on Rails. It's the same Ruby
+primer I hand out at the start of my Rails trainings — written so you can
+work through it on your own. I am going to elaborate on the most important
+points. The rest is then up to you. If you would like to know more about Ruby,
+then I recommend the book "The Ruby Programming Language" by David Flanagan
+and https://en.wikipedia.org/wiki/Yukihiro_Matsumoto[Yukihiro Matsumoto].
 
 [quote, Yukihiro Matsumoto]
 It is easy to program in Ruby, but Ruby is not a simple language.
