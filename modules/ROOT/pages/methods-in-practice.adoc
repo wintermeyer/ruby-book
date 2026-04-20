@@ -163,6 +163,44 @@ Reopening a class to change built-in behavior like this is
 called a _monkey patch_. Useful in tiny doses; a source of
 confusion at scale.
 
+[.agentic-tip]
+****
+.Agentic Coding Tip: Don't Let the Agent Monkey-Patch a Core Class
+Reopening `Integer`, `String`, `Array` or any other core
+class to add a method is powerful — too powerful. When asked
+"add a `.palindrome?` method to strings" or "make `Integer`
+have a `.to_roman` method," an agent will happily reopen the
+class because it's the shortest code that demonstrably works.
+
+The problems show up later, not at the point of writing:
+
+* Every library that touches that class now behaves subtly
+  differently from how its authors tested it.
+* Two parts of the same codebase can redefine the same
+  method and clobber each other, with the last one loaded
+  winning silently.
+* Stack traces point into `core/string.rb` even though the
+  surprising behaviour is local to your project.
+
+In almost every beginner case, the better shape is a plain
+method on a helper module or a subclass. If you need a
+"reverse this string and uppercase it" operation, write a
+module method; don't add `.shout_reversed` to `String`.
+
+*Rule to add to your project's `CLAUDE.md`:*
+
+[source]
+----
+Never reopen Ruby's core classes (Integer, Float, String,
+Array, Hash, Symbol, Range, Numeric, Object) to add or
+override methods. Put helpers on a module, a class method,
+or a small wrapper class instead. If you believe reopening a
+core class is genuinely warranted (e.g. a gem's published
+extension pattern), stop and explain why before writing the
+code.
+----
+****
+
 [[keyword-arguments]]
 == Keyword Arguments
 

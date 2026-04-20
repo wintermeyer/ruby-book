@@ -41,6 +41,53 @@ $ irb
 `{ black: '#000000' }` and `{ :black => '#000000' }` mean the
 same thing. The short form only works when the key is a symbol.
 
+[.agentic-tip]
+****
+.Agentic Coding Tip: Symbol vs String Keys — Pick One Per Hash
+A hash indexed by `"color"` is a different hash from one
+indexed by `:color`. Mixing the two in the same structure is
+one of the most common silent bugs in Ruby code:
+
+[source,bash]
+----
+$ irb
+>> colors = { "black" => "#000000" }
+=> {"black"=>"#000000"}
+>> colors[:black]
+=> nil
+>> colors["black"]
+=> "#000000"
+>> exit
+----
+
+When Claude stitches code together from multiple examples it
+will sometimes produce a mix — a config hash built with
+string keys, read with symbols in one helper, and with
+strings in another. Everything works in the test case the
+agent wrote. It fails in the one it didn't.
+
+*Rule to add to your project's `CLAUDE.md`:*
+
+[source]
+----
+For every hash I maintain, pick one key type (symbols or
+strings) and stay consistent throughout. Default to symbols
+for internal hashes: `{ color: :red }`, not
+`{ "color" => :red }`. Strings are appropriate for hashes
+that model external data (JSON payloads, YAML config, HTTP
+params) where the keys already arrive as strings. Never
+write code that silently assumes both forms work on the
+same hash.
+----
+
+Inside a Rails project the `params` hash is special — it
+uses a `HashWithIndifferentAccess` that accepts both
+`params[:id]` and `params["id"]`. That special-case is the
+reason the mix-up is so easy: readers (and agents) assume it
+generalises to every hash. It doesn't. Plain Ruby hashes
+treat `:black` and `"black"` as different keys, always.
+****
+
 [[iterator-each]]
 == Iterator `each`
 

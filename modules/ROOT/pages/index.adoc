@@ -41,6 +41,17 @@ on Rails_ book] and has been split page-per-section so each
 topic has its own URL. When you're ready to put Ruby to work
 in a web framework, the Rails book is the natural next step.
 
+Most readers will write Ruby alongside an AI coding agent, and
+this book assumes you are one of them. Everything still works
+if you type every character yourself. Throughout the book you
+will find boxes labelled *Agentic Coding Tip* flagging the
+Ruby-specific places where an agent reliably takes a wrong
+turn (truthiness, monkey-patching core classes, symbol vs
+string hash keys, and a few others), together with a concrete
+`CLAUDE.md` rule or a prompt that keeps the agent honest. The
+tips assume Claude Code as the concrete tool, but the
+underlying advice applies to any capable agent.
+
 The sidebar lets you jump to any chapter at any time — nothing
 is locked. That said, the book is written to be read front to
 back: each chapter sets up the next.

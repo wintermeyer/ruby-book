@@ -203,3 +203,43 @@ end
 All three versions are equivalent. Use `return` when it makes a
 method easier to read — for an early exit, say. Otherwise the
 implicit-return form is more idiomatic.
+
+[.agentic-tip]
+****
+.Agentic Coding Tip: The `/simplify` Slash Command
+You just saw three versions of the same method — verbose,
+idiomatic, and compact. That's a very common situation:
+working code that is wordier than it needs to be. It happens
+to everyone, especially in the first week of a new language.
+
+Claude Code ships a built-in `/simplify` slash command that
+performs exactly this transformation. Open a file, run
+`/simplify`, and Claude returns a simpler version of the code
+with the same behaviour, written in more idiomatic Ruby
+(implicit returns, one-liners where sensible, method calls
+chained when chaining reads naturally).
+
+Where it helps most:
+
+* First Ruby drafts from someone coming from another language
+  (JavaScript `const`/`return`, Python-style guards) that
+  still look foreign to a Ruby reader.
+* A method that grew a temporary variable per step when the
+  whole thing could be one expression.
+* Tests and scripts written by accretion over a session,
+  where repeated setup could be a single helper.
+
+Where it doesn't:
+
+* Anything that depends on the exact names of variables or
+  methods used by other files. `/simplify` optimises for
+  terseness and is willing to rename a local whose name was
+  quietly documenting intent.
+* Code where the explicit, verbose form is the teaching
+  point — a textbook example, a step in a migration plan,
+  or a helper you want a colleague to read twice.
+
+Treat `/simplify` as a "one file, one diff" tool. Always
+look at the diff before accepting; short code is not
+automatically better code.
+****

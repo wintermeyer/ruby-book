@@ -47,3 +47,42 @@ The word `nil` is a contraction of the Latin _nihil_ (nothing), or
 "not in list". Lisp gave us a lot of vocabulary; `nil` is one
 term that stuck.
 ====
+
+[.agentic-tip]
+****
+.Agentic Coding Tip: Ruby's Truthiness Rules Catch Agents Too
+An AI coding agent trained on a corpus that leans heavily on
+JavaScript and Python will sometimes forget that Ruby's
+truthiness rules are different. In JavaScript and Python, `0`
+and `""` are falsy. In Ruby they are truthy. Only `false` and
+`nil` are falsy in Ruby, full stop.
+
+The confusion shows up in validation and guard code:
+
+[source,ruby]
+----
+# Looks right. It's wrong for a legitimate zero value.
+if product.price
+  process(product)
+end
+----
+
+An agent will sometimes also write `if value != nil` when it
+meant "definitely has a value," missing that `false` is a
+possible value. Or reach for `value.blank?` or
+`value.present?` because those read like Python's
+"is it empty?" checks, forgetting that `blank?`/`present?`
+are Rails extensions and not in core Ruby.
+
+*Rule to add to your project's `CLAUDE.md`:*
+
+[source]
+----
+When testing "does this variable have a value," be explicit
+about what counts as absent. Use `.nil?` when only `nil`
+counts, `.empty?` for collections and strings, `.zero?` for
+numbers. Never rely on the truthiness of `0`, `""`, `[]`, or
+`{}`. Outside a Rails app, do not assume `blank?` /
+`present?` exist.
+----
+****
