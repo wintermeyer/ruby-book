@@ -13,4 +13,20 @@ It is easy to program in Ruby, but Ruby is not a simple language.
 
 [[ruby-version]]
 
-Pick a chapter from the sidebar. The material here is lifted from the Ruby Introduction chapter in the link:https://wintermeyer-consulting.de/rails/book/ruby-basics.html[_Learn Ruby on Rails_ book], split page-per-section so each topic has its own URL.
+Pick a chapter from the sidebar. The material here is lifted from the Ruby Introduction chapter in the link:https://wintermeyer-consulting.de/rails/book/[_Learn Ruby on Rails_ book], split page-per-section so each topic has its own URL.
+
+== Don't be a stranger
+
+A book like this gets better every time a reader sends me a note.
+
+* Did a chapter click, or did it leave you more confused than
+  before? Either answer is useful.
+* Found a typo, a broken example, code that no longer works on
+  the current Ruby version, a link that 404s?
+* Missing a topic you expected? Or curious about something this
+  book doesn't cover?
+
+Write me at mailto:sw@wintermeyer-consulting.de[sw@wintermeyer-consulting.de].
+Feedback, bug reports, kind words, angry words — all welcome.
+
+— Stefan
