@@ -1,21 +1,33 @@
 [[preface]]
 = Preface
 
-This book is a tightrope walk between oversimplification and a degree of
-detail that is unnecessary for a Rails newbie. After all, the objective is not
-becoming a Ruby guru, but understanding Ruby on Rails. It's the same Ruby
-primer I hand out at the start of my Rails trainings — written so you can
-work through it on your own. I am going to elaborate on the most important
-points. The rest is then up to you. If you would like to know more about Ruby,
-then I recommend the book "The Ruby Programming Language" by David Flanagan
-and https://en.wikipedia.org/wiki/Yukihiro_Matsumoto[Yukihiro Matsumoto].
+This is the Ruby primer I hand out at the start of my Rails
+trainings, published as a book of its own. The goal is not to
+turn you into a Ruby guru — it's the shortest useful path from
+"I've never written Ruby" to "I can read a Rails app".
+
+Ruby is easy to read but not a simple language. Ruby's creator,
+Yukihiro Matsumoto, put it best:
 
 [quote, Yukihiro Matsumoto]
 It is easy to program in Ruby, but Ruby is not a simple language.
 
-[[ruby-version]]
+Ten chapters cover objects, classes, variables, methods,
+conditionals, loops, collections and ranges — the foundations
+a Rails app sits on. For anything beyond the basics, David
+Flanagan and Yukihiro Matsumoto's
+https://en.wikipedia.org/wiki/Yukihiro_Matsumoto[_The Ruby
+Programming Language_] is where I'd send you next.
 
-Pick a chapter from the sidebar. The material here is lifted from the Ruby Introduction chapter in the link:https://wintermeyer-consulting.de/rails/book/[_Learn Ruby on Rails_ book], split page-per-section so each topic has its own URL.
+The material was originally the Ruby chapter of the
+link:https://wintermeyer-consulting.de/rails/book/[_Learn Ruby
+on Rails_ book] and has been split page-per-section so each
+topic has its own URL. When you're ready to put Ruby to work
+in a web framework, the Rails book is the natural next step.
+
+The sidebar lets you jump to any chapter at any time — nothing
+is locked. That said, the book is written to be read front to
+back: each chapter sets up the next.
 
 == Don't be a stranger
 
