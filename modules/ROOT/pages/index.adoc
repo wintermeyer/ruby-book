@@ -1,4 +1,5 @@
-= Welcome
+[[preface]]
+= Preface
 
 This chapter is a tightrope walk between oversimplification and a degree of
 detail that is unnecessary for a Rails newbie. After all, the objective is not
