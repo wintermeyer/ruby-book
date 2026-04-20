@@ -6,6 +6,10 @@ trainings, published as a book of its own. The goal is not to
 turn you into a Ruby guru — it's the shortest useful path from
 "I've never written Ruby" to "I can read a Rails app".
 
+Shameless plug: if you'd rather have the training itself —
+personalized, on-site or remote — drop me an email at
+mailto:sw@wintermeyer-consulting.de[sw@wintermeyer-consulting.de].
+
 Ruby is easy to read but not a simple language. Ruby's creator,
 Yukihiro Matsumoto, put it best:
 
