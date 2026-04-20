@@ -1,5 +1,6 @@
 [[preface]]
 = Preface
+:page-notoc: true
 
 This is the Ruby primer I hand out at the start of my Rails
 trainings, published as a book of its own. The goal is not to
