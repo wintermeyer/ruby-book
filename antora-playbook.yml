@@ -16,3 +16,7 @@ output:
   dir: build/site
 runtime:
   fetch: true
+
+asciidoc:
+  extensions:
+    - ./asciidoctor-extensions/terminal-role.js
