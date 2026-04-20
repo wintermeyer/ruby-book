@@ -1,0 +1,49 @@
+[[booleans-and-nil]]
+= true, false, and nil
+
+Ruby has three tiny but important values: `true`, `false`, and
+`nil`. Each is an instance of its own class:
+
+[source,bash]
+----
+$ irb
+>> true.class
+=> TrueClass
+>> false.class
+=> FalseClass
+>> nil.class
+=> NilClass
+>> exit
+----
+
+`true` and `false` are Ruby's booleans. `nil` represents the
+absence of a value.
+
+The only values that Ruby treats as _falsy_ are `false` and `nil`.
+Everything else — including `0`, `""`, and `[]` — is treated as
+_truthy_. This is an important rule and a frequent source of
+surprises for newcomers coming from other languages.
+
+[source,bash]
+----
+$ irb
+>> if 0
+?>   puts '0 is truthy'
+>> end
+0 is truthy
+=> nil
+>> if ''
+?>   puts 'empty string is truthy'
+>> end
+empty string is truthy
+=> nil
+>> exit
+----
+
+[NOTE]
+====
+The word `nil` is a contraction of the Latin _nihil_ (nothing), or
+— if you squint at the history of computing — the Lisp expression
+"not in list". Lisp gave us a lot of vocabulary; `nil` is one
+term that stuck.
+====

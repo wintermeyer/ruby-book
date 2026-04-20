@@ -1,10 +1,10 @@
-[[range]]
-= Range
+[[ranges]]
+= Ranges
 
-The class Range represents an interval. The start and end points of the
-interval are defined enclosed in normal brackets and separated by two
-dots in between them. Here is an example in which we use a range like an
-iterator with each:
+A _range_ represents an interval — a start value, an end
+value, and everything in between. Ranges are written with two
+dots, usually inside parentheses. Here we iterate over one
+with `each`:
 
 [source,bash]
 ----

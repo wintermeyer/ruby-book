@@ -1,0 +1,313 @@
+[[methods-in-practice]]
+= More on Methods
+
+Now that you have met xref:classes.adoc[classes and objects],
+it's worth revisiting methods from a few new angles — how to
+chain them, how to convert values between classes, and how to
+pass arguments more cleanly.
+
+[[method-chaining]]
+== Method Chaining
+
+A method returns a value, and you can call another method on
+that value right away. You will see long chains like this
+all over idiomatic Ruby code:
+
+[source,bash]
+----
+$ irb
+>> a = 'a blue car'
+=> "a blue car"
+>> a.upcase
+=> "A BLUE CAR"
+>> a.upcase.reverse
+=> "RAC EULB A"
+>> exit
+----
+
+Each method hands its result to the next.
+
+[[converting-from-one-to-the-other-casting]]
+== Converting Between Classes (Casting)
+
+Ruby gives most classes a handful of `to_*` methods for
+converting into another class. `to_s` turns something into a
+`String`, `to_i` into an `Integer`, `to_f` into a `Float`, and
+so on.
+
+[source,bash]
+----
+$ irb
+>> a = 10
+=> 10
+>> a.class
+=> Integer
+>> b = a.to_s
+=> "10"
+>> b.class
+=> String
+>> exit
+----
+
+NOTE: `puts` uses `to_s` under the hood. That is why
+      `puts 10` just works — `puts` calls `to_s` on anything
+      that is not already a string.
+
+Going the other way:
+
+[source,bash]
+----
+$ irb
+>> c = 10.0
+=> 10.0
+>> c.class
+=> Float
+>> d = c.to_i
+=> 10
+>> d.class
+=> Integer
+>> exit
+----
+
+[[is-a-method]]
+== Is `+` a Method?
+
+Operators like `+` look like special syntax, but in Ruby they
+are ordinary method calls. You can see the method documented
+right alongside the rest of the class:
+
+[source,bash]
+----
+$ ri -T String.+
+String.+
+
+(from ruby site)
+------------------------------------------------------------------------------
+  str + other_str   -> new_str
+
+------------------------------------------------------------------------------
+
+Concatenation---Returns a new String containing other_str
+concatenated to str.
+
+  "Hello from " + self.to_s   #=> "Hello from main"
+----
+
+And for `Integer`:
+
+[source,bash]
+----
+$ ri -T Integer.+
+Integer.+
+
+(from ruby site)
+------------------------------------------------------------------------------
+  int + numeric  ->  numeric_result
+
+------------------------------------------------------------------------------
+
+Performs addition: the class of the resulting object depends on
+the class of numeric and on the magnitude of the result.
+----
+
+Which means you can call `+` with the regular method-call
+syntax if you want to:
+
+[source,bash]
+----
+$ irb
+>> 10 + 10
+=> 20
+>> 10+10
+=> 20
+>> 10.+10
+=> 20
+>> 10.+(10)
+=> 20
+>> exit
+----
+
+All four lines do the same thing. `10 + 10` is just nicer to
+read.
+
+[[can-i-overwrite-the-method]]
+=== Can I Override `+`?
+
+Yes — any method, including operators, can be redefined. That
+is rarely a good idea, but it is possible. Here we redefine
+`Integer#+` to always return `42`:
+
+[source,ruby]
+.monkey-patch-a.rb
+----
+class Integer
+  def +(name, *args, &blk)
+    42
+  end
+end
+----
+
+[source,bash]
+----
+irb
+>> 10 + 10
+=> 20
+>> load './monkey-patch-a.rb'
+=> true
+>> 10 + 10
+=> 42
+>> exit
+----
+
+Reopening a class to change built-in behavior like this is
+called a _monkey patch_. Useful in tiny doses; a source of
+confusion at scale.
+
+[[keyword-arguments]]
+== Keyword Arguments
+
+So far we have passed arguments by position: the first
+argument goes into the first parameter, the second into the
+second, and so on. That works fine for one or two arguments
+but becomes error-prone with four or five. Which one was the
+name again, which one the age?
+
+_Keyword arguments_ fix that. A colon after the parameter
+name turns it into a keyword:
+
+[source,ruby]
+.greet-a.rb
+----
+def greet(name:, age:)
+  puts "Hello #{name}, you are #{age} years old."
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './greet-a.rb'
+=> true
+>> greet(name: 'Stefan', age: 52)
+Hello Stefan, you are 52 years old.
+=> nil
+>> greet(age: 52, name: 'Stefan')
+Hello Stefan, you are 52 years old.
+=> nil
+>> exit
+----
+
+Order no longer matters, and the call reads almost like a
+sentence. If you leave a required keyword out, Ruby raises an
+error:
+
+[source,bash]
+----
+>> greet(name: 'Stefan')
+ArgumentError (missing keyword: :age)
+----
+
+You can give a keyword a default value:
+
+[source,ruby]
+.greet-b.rb
+----
+def greet(name:, age: 18)
+  puts "Hello #{name}, you are #{age} years old."
+end
+----
+
+Now `age` is optional:
+
+[source,bash]
+----
+$ irb
+>> load './greet-b.rb'
+=> true
+>> greet(name: 'Stefan')
+Hello Stefan, you are 18 years old.
+=> nil
+>> exit
+----
+
+Rails uses keyword arguments heavily. You will see them
+everywhere.
+
+[[multiple-assignment-and-splat]]
+== Multiple Assignment and the Splat Operator
+
+Ruby lets you assign several variables on one line:
+
+[source,bash]
+----
+$ irb
+>> a, b = 1, 2
+=> [1, 2]
+>> a
+=> 1
+>> b
+=> 2
+>> exit
+----
+
+Handy for swapping values without a temporary variable:
+
+[source,bash]
+----
+$ irb
+>> a = 1
+=> 1
+>> b = 2
+=> 2
+>> a, b = b, a
+=> [2, 1]
+>> a
+=> 2
+>> b
+=> 1
+>> exit
+----
+
+If the right side has more elements than the left, Ruby
+drops the rest. If it has fewer, the leftover variables
+become `nil`. Use the _splat operator_ `*` to collect the
+rest into an array:
+
+[source,bash]
+----
+$ irb
+>> first, *rest = [1, 2, 3, 4]
+=> [1, 2, 3, 4]
+>> first
+=> 1
+>> rest
+=> [2, 3, 4]
+>> exit
+----
+
+The same splat works on method parameters, letting a method
+accept any number of arguments:
+
+[source,ruby]
+.sum.rb
+----
+def sum(*numbers)
+  total = 0
+  numbers.each { |n| total += n }
+  total
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './sum.rb'
+=> true
+>> sum(1, 2, 3)
+=> 6
+>> sum(10, 20, 30, 40)
+=> 100
+>> exit
+----
+
+Inside `sum`, `numbers` is a regular array.

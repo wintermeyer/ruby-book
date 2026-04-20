@@ -1,0 +1,205 @@
+[[methods]]
+= Methods
+
+In other programming languages the term you might use for a Ruby
+method is _function_, _procedure_, or _subroutine_. In Ruby
+everything is a method — a named piece of code that does a job,
+optionally takes arguments, and optionally returns a value.
+
+Method names are written in `snake_case`.
+
+[NOTE]
+====
+Ruby has two kinds of methods: _class methods_ and _instance
+methods_. You will meet both in the
+xref:classes.adoc[Classes and Objects] chapter. For now, treat
+every method as a standalone piece of code.
+====
+
+[[defining-a-method]]
+== Defining a Method
+
+Suppose we repeat the same three lines of code in a program (for
+whatever reason):
+
+[source,ruby]
+.hello-worldx3a.rb
+----
+puts 'Hello World!'
+puts 'Hello World!'
+puts 'Hello World!'
+----
+
+We can bundle these three lines into a method called `three_times`:
+
+[source,ruby]
+.hello-worldx3b.rb
+----
+def three_times
+  puts 'Hello World!'
+  puts 'Hello World!'
+  puts 'Hello World!'
+end
+----
+
+Let's test this in `irb` with `load './hello-worldx3b.rb'`, which
+reads the file and makes its definitions available:
+
+[source,bash]
+----
+$ irb
+>> load './hello-worldx3b.rb'
+=> true
+>> three_times
+Hello World!
+Hello World!
+Hello World!
+=> nil
+>> exit
+----
+
+[[parameters]]
+== Parameters
+
+Methods become much more useful when you can pass values into them.
+Parameters turn a fixed method into a flexible one:
+
+[source,ruby]
+.hello-worldx3c.rb
+----
+def three_times(value)
+  puts value
+  puts value
+  puts value
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './hello-worldx3c.rb'
+=> true
+>> three_times('Hello World!')
+Hello World!
+Hello World!
+Hello World!
+=> nil
+----
+
+The parentheses around the argument are optional:
+
+[source,bash]
+----
+>> three_times 'Hello World!'
+Hello World!
+Hello World!
+Hello World!
+=> nil
+----
+
+[TIP]
+====
+Ruby gurus will turn up their noses at "unnecessary" brackets in
+your programs and probably pepper you with comparisons to Java.
+There is one simple rule in the Ruby community: the fewer brackets,
+the cooler you are. ;-)
+
+You won't get a medal for using fewer brackets, though. Decide for
+yourself what makes you happy.
+====
+
+If you call a method without the required argument you get an
+`ArgumentError`:
+
+[source,bash]
+----
+>> three_times
+ArgumentError: wrong number of arguments (given 0, expected 1)
+----
+
+[[default-values]]
+== Default Values
+
+You can give a parameter a default, which lets callers skip it:
+
+[source,ruby]
+.hello-worldx3d.rb
+----
+def three_times(value = 'blue')
+  puts value
+  puts value
+  puts value
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './hello-worldx3d.rb'
+=> true
+>> three_times('Example')
+Example
+Example
+Example
+=> nil
+>> three_times
+blue
+blue
+blue
+=> nil
+>> exit
+----
+
+[[return]]
+== return
+
+`puts` is nice for printing but most methods exist to produce a
+_value_. The `return` keyword ships a value back to the caller:
+
+[source,ruby]
+.circle-a.rb
+----
+def area_of_a_circle(radius)
+  pi = 3.14
+  area = pi * radius * radius
+  return area
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './circle-a.rb'
+=> true
+>> area_of_a_circle(10)
+=> 314.0
+>> exit
+----
+
+Ruby lets you skip `return` — a method automatically returns the
+value of its last expression:
+
+[source,ruby]
+.circle-b.rb
+----
+def area_of_a_circle(radius)
+  pi = 3.14
+  area = pi * radius * radius
+  area
+end
+----
+
+You can go one step further and drop the temporary variable too:
+
+[source,ruby]
+.circle-c.rb
+----
+def area_of_a_circle(radius)
+  pi = 3.14
+  pi * radius * radius
+end
+----
+
+All three versions are equivalent. Use `return` when it makes a
+method easier to read — for an early exit, say. Otherwise the
+implicit-return form is more idiomatic.

@@ -1,0 +1,61 @@
+[[logical-operators]]
+= Logical Operators
+
+Ruby gives you three operators for combining `true`/`false`
+values:
+
+[cols="1,3"]
+|===
+| `&&` | _and_ — true if both sides are true
+| `\|\|` | _or_ — true if at least one side is true
+| `!`  | _not_ — flips true into false and vice versa
+|===
+
+[source,bash]
+----
+$ irb
+>> true && true
+=> true
+>> true && false
+=> false
+>> true || false
+=> true
+>> !true
+=> false
+>> exit
+----
+
+Because only `false` and `nil` are falsy (see
+xref:booleans-and-nil.adoc[true, false, and nil]), these
+operators work with any Ruby value, not just booleans.
+
+[[default-values]]
+== A Handy Idiom: Default Values with `||`
+
+`||` does not strictly return `true` or `false` — it
+returns the first value that is not `false` or `nil`. That
+makes it a clean way to supply a default:
+
+[source,bash]
+----
+$ irb
+>> name = nil
+=> nil
+>> display_name = name || 'Anonymous'
+=> "Anonymous"
+>> name = 'Stefan'
+=> "Stefan"
+>> display_name = name || 'Anonymous'
+=> "Stefan"
+>> exit
+----
+
+You will see this pattern constantly in Ruby and Rails code.
+
+[NOTE]
+====
+Ruby also has `and`, `or` and `not` as word forms. They look
+friendlier, but have a much lower precedence than `&&`, `||`
+and `!`, which makes them surprising in practice. The
+community convention is to stick with the symbol forms.
+====

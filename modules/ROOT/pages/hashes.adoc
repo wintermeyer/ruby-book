@@ -1,0 +1,160 @@
+[[hashes]]
+= Hashes
+
+A _hash_ is a collection of _key/value pairs_. You hand Ruby a
+key and get the matching value back. Unlike arrays (which are
+indexed by position), hashes are indexed by whatever you want
+— a string, a symbol, a number, even an object.
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1, 'butter' => 0.99 }
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices['egg']
+=> 0.1
+>> prices.count
+=> 2
+>> exit
+----
+
+Hash values can be anything — strings, numbers, arrays, other
+hashes, or instances of your own classes.
+
+[[hash-keys-with-symbols]]
+== Symbols as Keys
+
+In practice you'll usually see xref:symbols.adoc[symbols] used
+as hash keys rather than strings. They're cheaper, they compare
+faster, and Ruby has a dedicated shorthand for them:
+
+[source,bash]
+----
+$ irb
+>> colors = { black: '#000000', white: '#FFFFFF' }
+=> {:black=>"#000000", :white=>"#FFFFFF"}
+>> colors[:white]
+=> "#FFFFFF"
+>> exit
+----
+
+`{ black: '#000000' }` and `{ :black => '#000000' }` mean the
+same thing. The short form only works when the key is a symbol.
+
+[[iterator-each]]
+== Iterator `each`
+
+`each` walks the hash and yields two values per pair: the key
+and the value.
+
+[source,bash]
+----
+$ irb
+>> colors = { black: '#000000', white: '#FFFFFF' }
+=> {:black=>"#000000", :white=>"#FFFFFF"}
+>> colors.each do |key, value|
+?>   puts "#{key} #{value}"
+>> end
+black #000000
+white #FFFFFF
+=> {:black=>"#000000", :white=>"#FFFFFF"}
+>> exit
+----
+
+`ri Hash.each` gives you the signature if you need a reminder.
+
+[[more-hash-methods]]
+== Methods You'll Use Often
+
+A handful of hash methods you'll reach for all the time.
+
+*Reading a value safely with `fetch`*:
+
+`hash[key]` returns `nil` if the key is missing. `fetch` raises
+an error instead, which is often what you actually want. You
+can also pass a default:
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1, 'butter' => 0.99 }
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices['milk']
+=> nil
+>> prices.fetch('milk')
+KeyError (key not found: "milk")
+>> prices.fetch('milk', 1.20)
+=> 1.2
+>> exit
+----
+
+*Listing keys and values*:
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1, 'butter' => 0.99 }
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices.keys
+=> ["egg", "butter"]
+>> prices.values
+=> [0.1, 0.99]
+>> prices.size
+=> 2
+>> exit
+----
+
+*Asking questions*:
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1, 'butter' => 0.99 }
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices.include?('egg')
+=> true
+>> prices.include?('milk')
+=> false
+>> prices.empty?
+=> false
+>> {}.empty?
+=> true
+>> exit
+----
+
+*Adding, updating and deleting*:
+
+[source,bash]
+----
+$ irb
+>> prices = { 'egg' => 0.1 }
+=> {"egg"=>0.1}
+>> prices['butter'] = 0.99
+=> 0.99
+>> prices
+=> {"egg"=>0.1, "butter"=>0.99}
+>> prices['egg'] = 0.15
+=> 0.15
+>> prices.delete('egg')
+=> 0.15
+>> prices
+=> {"butter"=>0.99}
+>> exit
+----
+
+*Merging two hashes*:
+
+[source,bash]
+----
+$ irb
+>> defaults = { color: 'white', size: 'M' }
+=> {:color=>"white", :size=>"M"}
+>> overrides = { color: 'red' }
+=> {:color=>"red"}
+>> defaults.merge(overrides)
+=> {:color=>"red", :size=>"M"}
+>> exit
+----
+
+`merge` returns a new hash. The original is untouched. Values
+in the second hash win on collisions.

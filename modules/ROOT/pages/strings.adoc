@@ -1,0 +1,263 @@
+[[strings]]
+= Strings
+
+A _string_ is a sequence of characters — text, basically. Strings
+are instances of the `String` class. You write them either between
+single quotes or between double quotes:
+
+[source,bash]
+----
+$ irb
+>> 'First test'.class
+=> String
+>> "First test".class
+=> String
+>> exit
+----
+
+Ruby also lets you call `String.new` explicitly. Without an
+argument you get an empty string:
+
+[source,bash]
+----
+$ irb
+>> String.new('Second test')
+=> "Second test"
+>> String.new
+=> ""
+>> exit
+----
+
+In day-to-day code nobody writes `String.new('foo')`; they write
+`'foo'` or `"foo"`.
+
+[[single-and-double-quotations-marks]]
+== Single and Double Quotation Marks
+
+The quote style matters. Double quotes allow two tricks that
+single quotes don't:
+
+* _Interpolation_: `"#{expression}"` evaluates the expression and
+  embeds the result in the string.
+* _Escape sequences_: `"\n"` for a newline, `"\t"` for a tab, etc.
+  See xref:#string-escape-sequences[Escape Sequences] below.
+
+Interpolation in action:
+
+[source,bash]
+----
+$ irb
+>> a = "blue"
+=> "blue"
+>> b = "Color: #{a}"
+=> "Color: blue"
+>> exit
+----
+
+If the interpolated value is not already a string, Ruby calls
+`to_s` on it:
+
+[source,bash]
+----
+$ irb
+>> a = 1
+=> 1
+>> a.class
+=> Integer
+>> b = "A test: #{a}"
+=> "A test: 1"
+>> b.class
+=> String
+>> exit
+----
+
+Use single quotes when you don't need interpolation or escape
+sequences: they make your intent clearer and are a touch faster.
+Use double quotes the moment you want to drop a variable or a
+newline into the string.
+
+NOTE: "Single or double quotation marks" here means ASCII
+      `'` and `"` — not typographically correct
+      curly quotes like `’` or `”`. See
+      http://en.wikipedia.org/wiki/Quotation_mark[Wikipedia on
+      quotation marks] if you are curious about the difference.
+
+[[built-in-methods-for-string]]
+== Built-in Methods
+
+Strings come with a long list of methods. Here are a few handy
+ones:
+
+[source,bash]
+----
+$ irb
+>> a = 'A dog'
+=> "A dog"
+>> a.size
+=> 5
+>> a.downcase
+=> "a dog"
+>> a.upcase
+=> "A DOG"
+>> a.reverse
+=> "god A"
+>> exit
+----
+
+Use `String.instance_methods(false)` to see the full list:
+
+[source,bash]
+----
+$ irb
+>> String.instance_methods(false)
+=> [:include?, :%, :*, :+, :to_c, :unicode_normalize,
+    :unicode_normalize!, :unicode_normalized?, :count, :partition,
+    :unpack, :unpack1, :sum, :next, :casecmp, :casecmp?, :insert,
+    :bytesize, :match, :match?, :succ!, :+@, :-@, :index, :rindex,
+    :<=>, :replace, :clear, :upto, :getbyte, :==, :===, :setbyte,
+    :=~, :scrub, :[], :[]=, :chr, :scrub!, :dump, :byteslice,
+    :upcase, :next!, :empty?, :eql?, :downcase, :capitalize,
+    :swapcase, :upcase!, :downcase!, :capitalize!, :swapcase!,
+    # … many more …
+    :to_r]
+>> exit
+----
+
+[[useful-string-methods]]
+== Methods You'll Use Often
+
+In practice you reach for the same handful again and again. Here
+they are, grouped by what you typically want to do.
+
+*Cutting a string with `split`*:
+
+[source,bash]
+----
+$ irb
+>> 'one,two,three'.split(',')
+=> ["one", "two", "three"]
+>> 'one two  three'.split
+=> ["one", "two", "three"]
+>> exit
+----
+
+Without an argument, `split` cuts at whitespace and collapses
+runs of spaces.
+
+*Replacing with `sub` and `gsub`*:
+
+`sub` replaces the first match, `gsub` replaces all of them.
+
+[source,bash]
+----
+$ irb
+>> 'Hello World'.sub('World', 'Ruby')
+=> "Hello Ruby"
+>> 'aaaa'.sub('a', 'b')
+=> "baaa"
+>> 'aaaa'.gsub('a', 'b')
+=> "bbbb"
+>> exit
+----
+
+*Cleaning up whitespace with `strip`, `chomp`, `lstrip`, `rstrip`*:
+
+[source,bash]
+----
+$ irb
+>> "   hello   \n".strip
+=> "hello"
+>> "hello\n".chomp
+=> "hello"
+>> "   hello".lstrip
+=> "hello"
+>> "hello   ".rstrip
+=> "hello"
+>> exit
+----
+
+`strip` removes whitespace on both ends, `lstrip` only on the
+left, `rstrip` only on the right, and `chomp` removes a trailing
+newline (very handy after reading input from a user).
+
+*Asking questions*:
+
+Methods that end in `?` return `true` or `false`. That's a
+convention, not special syntax:
+
+[source,bash]
+----
+$ irb
+>> 'Hello World'.include?('World')
+=> true
+>> 'Hello World'.start_with?('Hello')
+=> true
+>> 'example.rb'.end_with?('.rb')
+=> true
+>> ''.empty?
+=> true
+>> exit
+----
+
+*Converting to and from other types*:
+
+[source,bash]
+----
+$ irb
+>> '42'.to_i
+=> 42
+>> '3.14'.to_f
+=> 3.14
+>> 42.to_s
+=> "42"
+>> 'abc'.to_i
+=> 0
+>> exit
+----
+
+Note the last line: `to_i` on a string that does not start with
+digits returns `0` rather than raising an error. That bites
+beginners, so keep it in mind.
+
+[[string-escape-sequences]]
+== Escape Sequences
+
+Inside double-quoted strings a backslash starts an _escape
+sequence_. The ones you'll actually use:
+
+[cols="1,3"]
+|===
+| `\n` | newline
+| `\t` | tab
+| `\\` | a single backslash
+| `\"` | a literal double quote
+| `\#` | a literal `#` (stops interpolation)
+|===
+
+[source,bash]
+----
+$ irb
+>> puts "line one\nline two"
+line one
+line two
+=> nil
+>> puts "name:\tStefan"
+name:   Stefan
+=> nil
+>> exit
+----
+
+Single-quoted strings ignore most escape sequences. Only `\\` and
+`\'` have special meaning there:
+
+[source,bash]
+----
+$ irb
+>> puts 'line one\nline two'
+line one\nline two
+=> nil
+>> exit
+----
+
+If you want interpolation or escape sequences, use double quotes.
+Otherwise stay with single quotes — the intent is clearer.

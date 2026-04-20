@@ -1,0 +1,137 @@
+[[blocks-procs-lambdas]]
+= Blocks, Procs, and Lambdas
+
+You have already been using _blocks_ without knowing the
+name. `5.times { |i| puts i }` and `cart.each do |item| ...
+end` both hand a chunk of code to a method — that chunk is a
+block. Once you see blocks as first-class pieces of code,
+several other Ruby features fall into place.
+
+[[blocks]]
+== Blocks
+
+The two block forms are interchangeable. Convention: `{ }`
+for one-liners, `do ... end` for multi-line blocks.
+
+[source,bash]
+----
+$ irb
+>> [1, 2, 3].each { |n| puts n * 2 }
+2
+4
+6
+=> [1, 2, 3]
+>> [1, 2, 3].each do |n|
+?>   doubled = n * 2
+>>   puts doubled
+>> end
+2
+4
+6
+=> [1, 2, 3]
+>> exit
+----
+
+[[yield]]
+== Writing a Method That Takes a Block
+
+Inside a method, `yield` runs the block that was passed in:
+
+[source,ruby]
+.twice.rb
+----
+def twice
+  yield
+  yield
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './twice.rb'
+=> true
+>> twice { puts 'hello' }
+hello
+hello
+=> nil
+>> exit
+----
+
+You can also pass values to the block:
+
+[source,ruby]
+.each_name.rb
+----
+def each_name
+  yield 'Alice'
+  yield 'Bob'
+  yield 'Carol'
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './each_name.rb'
+=> true
+>> each_name { |name| puts "Hi #{name}" }
+Hi Alice
+Hi Bob
+Hi Carol
+=> nil
+>> exit
+----
+
+This is exactly how `Array#each` is built internally.
+
+[[procs]]
+== Procs
+
+A `Proc` is a block stored in a variable. You build one with
+`Proc.new` or the shorthand `proc`, and call it with `.call`:
+
+[source,bash]
+----
+$ irb
+>> greet = Proc.new { |name| puts "Hello #{name}" }
+=> #<Proc:...>
+>> greet.call('Stefan')
+Hello Stefan
+=> nil
+>> exit
+----
+
+Procs are useful when you want to reuse the same block or
+pass it around like any other value.
+
+[[lambdas]]
+== Lambdas
+
+A _lambda_ is a stricter Proc. Create one with the `->`
+arrow syntax:
+
+[source,bash]
+----
+$ irb
+>> square = ->(n) { n * n }
+=> #<Proc (lambda)>
+>> square.call(5)
+=> 25
+>> square.(5)
+=> 25
+>> square[5]
+=> 25
+>> exit
+----
+
+The three call styles are equivalent. The arrow syntax is
+the modern Ruby idiom.
+
+The practical difference from a Proc is that a lambda
+checks the number of arguments (too many or too few raises
+an error) and a bare `return` inside a lambda returns from
+the lambda, not from the surrounding method. In day-to-day
+beginner code you will rarely notice. Reach for lambdas when
+you want the stricter behavior, and for blocks when you just
+need a piece of code to hand to a method.

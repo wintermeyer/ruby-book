@@ -1,0 +1,702 @@
+[[classes-and-objects]]
+= Classes and Objects
+
+Ruby is object-oriented. Everything is an object — every string,
+every number, even `nil`. An object is an instance of some class,
+and you can ask any object for its class with `.class`:
+
+[source,bash]
+----
+$ irb
+>> 'hello'.class
+=> String
+>> 42.class
+=> Integer
+>> nil.class
+=> NilClass
+>> exit
+----
+
+Objects are _encapsulated_: you can't reach inside and change an
+object directly. You ask the object to change itself by calling one
+of its _methods_.
+
+[NOTE]
+====
+Don't worry if classes and objects still feel abstract. Roughly
+speaking, an object is a container for data, and a method is a
+way of getting at or changing what's in that container. Read the
+examples below and the puzzle will assemble itself.
+====
+
+[[classes]]
+== Classes
+
+A class is — for now — a collection of methods. Class names start
+with an uppercase letter:
+
+[source,ruby]
+.hello-worldx3e.rb
+----
+class ThisAndThat
+  def three_times
+    puts 'Hello World!'
+    puts 'Hello World!'
+    puts 'Hello World!'
+  end
+end
+----
+
+Let's play with it in `irb`:
+
+[source,bash]
+----
+$ irb
+>> load './hello-worldx3e.rb'
+=> true
+----
+
+Try calling the method on the class itself:
+
+[source,bash]
+----
+>> ThisAndThat.three_times
+NoMethodError: undefined method `three_times' for ThisAndThat:Class
+----
+
+That fails because `three_times` is an _instance method_: it lives
+on an _instance_ of `ThisAndThat`, not on the class. You create an
+instance with the class method `new`:
+
+[source,bash]
+----
+>> abc = ThisAndThat.new
+=> #<ThisAndThat:0x007fb01b02dcd0>
+>> abc.three_times
+Hello World!
+Hello World!
+Hello World!
+=> nil
+>> exit
+----
+
+We'll come back to the class-vs-instance distinction in
+<<class-methods-and-instance-methods,the section on Class Methods
+and Instance Methods>> below.
+
+[[initialize]]
+== initialize
+
+When you call `Klass.new`, Ruby creates a fresh instance and
+immediately runs a method called `initialize` on it — if the class
+defines one. `initialize` is the place to set up an instance's
+starting state.
+
+[source,ruby]
+.initialize-example-a.rb
+----
+class Room
+  def initialize
+    puts 'A new room!'
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './initialize-example-a.rb'
+=> true
+>> kitchen = Room.new
+A new room!
+=> #<Room:0x007f830704edb8>
+>> exit
+----
+
+`new` passes its arguments straight through to `initialize`, so you
+can take parameters:
+
+[source,ruby]
+.initialize-example-b.rb
+----
+class Room
+  def initialize(name)
+    puts "A new room called #{name}"
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './initialize-example-b.rb'
+=> true
+>> Room.new('kitchen')
+A new room called kitchen
+=> #<Room:0x007fbb0b845f30>
+>> exit
+----
+
+`initialize` is private by default — you can't call it directly
+from the outside. You always reach it through `new`.
+
+[[instance-variables]]
+== Instance Variables (`@name`)
+
+Methods inside a class can remember things _per instance_ using
+_instance variables_, which start with an `@`:
+
+[source,ruby]
+.wall-a.rb
+----
+class Wall
+  def initialize
+    @color = 'white'
+  end
+
+  def color
+    @color
+  end
+
+  def paint_it(new_color)
+    @color = new_color
+  end
+end
+----
+
+[source,bash]
+----
+$ ruby wall-a.rb
+$ irb
+>> load './wall-a.rb'
+=> true
+>> my_wall = Wall.new
+=> #<Wall @color="white">
+>> my_wall.color
+=> "white"
+>> my_wall.paint_it('red')
+=> "red"
+>> my_wall.color
+=> "red"
+>> exit
+----
+
+`initialize` sets `@color` to `'white'`. The `color` method _reads_
+it. The `paint_it` method _writes_ to it. Each new `Wall` has its
+own `@color`.
+
+[[getters-and-setters]]
+== Getters and Setters
+
+Reading and writing an instance variable is so common that writing
+a method for it every time would be tedious. Ruby gives you
+shortcuts.
+
+Start with the `Room` class. It should know its number of doors
+and windows:
+
+[source,ruby]
+.room.rb
+----
+class Room
+  def initialize
+    @doors   = 1
+    @windows = 1
+  end
+
+  def doors
+    @doors
+  end
+
+  def windows
+    @windows
+  end
+end
+
+kitchen = Room.new
+
+puts "D: #{kitchen.doors}"
+puts "W: #{kitchen.windows}"
+----
+
+[source,bash]
+----
+$ ruby room.rb
+D: 1
+W: 1
+$
+----
+
+`doors` and `windows` are _getters_. Since writing a one-line getter
+for every attribute is dull, Ruby provides `attr_reader`:
+
+[source,ruby]
+.room.rb
+----
+class Room
+  def initialize
+    @doors   = 1
+    @windows = 1
+  end
+
+  attr_reader :doors, :windows
+end
+
+kitchen = Room.new
+
+puts "D: #{kitchen.doors}"
+puts "W: #{kitchen.windows}"
+----
+
+`attr_reader` is a method that runs inside the class body. It takes
+xref:symbols.adoc[symbols] (not instance variables) because it's
+talking about _names_, not the current values.
+
+[NOTE]
+====
+`attr_reader` is a small example of Ruby's _metaprogramming_:
+methods that write other methods for you. Rails uses this
+technique everywhere.
+====
+
+To let the outside world _change_ doors or windows, you need a
+_setter_. Written by hand:
+
+[source,ruby]
+.room.rb
+----
+class Room
+  def initialize
+    @doors   = 1
+    @windows = 1
+  end
+
+  attr_reader :doors, :windows
+
+  def doors=(value)
+    @doors = value
+  end
+
+  def windows=(value)
+    @windows = value
+  end
+end
+
+kitchen = Room.new
+kitchen.windows = 2
+
+puts "D: #{kitchen.doors}"
+puts "W: #{kitchen.windows}"
+----
+
+[source,bash]
+----
+$ ruby room.rb
+D: 1
+W: 2
+$
+----
+
+Same story as getters — Ruby has a shortcut. `attr_writer`:
+
+[source,ruby]
+.room.rb
+----
+class Room
+  def initialize
+    @doors   = 1
+    @windows = 1
+  end
+
+  attr_reader :doors, :windows
+  attr_writer :doors, :windows
+end
+----
+
+And when you want _both_ for the same attributes there is
+`attr_accessor`:
+
+[source,ruby]
+.room.rb
+----
+class Room
+  def initialize
+    @doors   = 1
+    @windows = 1
+  end
+
+  attr_accessor :doors, :windows
+end
+
+kitchen = Room.new
+kitchen.windows = 2
+
+puts "D: #{kitchen.doors}"
+puts "W: #{kitchen.windows}"
+----
+
+Most classes you'll see in the wild use `attr_accessor` (or
+`attr_reader` for read-only attributes) rather than hand-rolled
+getters and setters.
+
+[[private-methods]]
+== Private Methods
+
+Sometimes you want a method to be callable only from within its
+own class — a helper the outside world has no business touching.
+List such methods below the keyword `private`:
+
+[source,ruby]
+.pm-example.rb
+----
+class Example
+  def a
+    puts 'a'
+  end
+
+  private
+
+  def b
+    puts 'b'
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './pm-example.rb'
+=> true
+>> abc = Example.new
+=> #<Example:0x007fa530037910>
+>> abc.a
+a
+=> nil
+>> abc.b
+NoMethodError: private method `b' called for #<Example:...>
+>> exit
+----
+
+`a` is public and callable from anywhere. `b` is private and only
+reachable from inside the class itself.
+
+[[inheritance]]
+== Inheritance
+
+A class can inherit from another class. Put the parent after a `<`
+sign in the class declaration:
+
+[source,ruby]
+----
+class Child < Parent
+----
+
+Rails uses inheritance heavily — which is why we introduce it here
+early.
+
+In this example `Abcd` inherits from `Abc` and adds a fourth
+method:
+
+[source,ruby]
+.inheritance-example-a.rb
+----
+class Abc
+  def a
+    'a'
+  end
+
+  def b
+    'b'
+  end
+
+  def c
+    'c'
+  end
+end
+
+class Abcd < Abc
+  def d
+    'd'
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './inheritance-example-a.rb'
+=> true
+>> example1 = Abc.new
+=> #<Abc:0x007fac5a845630>
+>> example2 = Abcd.new
+=> #<Abcd:0x007fac5a836630>
+>> example2.d
+=> "d"
+>> example2.a
+=> "a"
+>> example1.d
+NoMethodError: undefined method `d' for #<Abc:0x007fac5a845630>
+>> example1.a
+=> "a"
+>> exit
+----
+
+`example2` (an `Abcd`) can call `a`, `b`, `c` and `d`. `example1`
+(an `Abc`) only has `a`, `b` and `c` — it doesn't know about `d`.
+
+[TIP]
+====
+Read the error messages. They tell you exactly what happened and
+where to start looking. The `NoMethodError` above names the class
+(`Abc`) and the missing method (`d`). That's enough to spot the
+problem without a debugger.
+====
+
+[[class-methods-and-instance-methods]]
+== Class Methods and Instance Methods
+
+Two kinds of methods live on a class:
+
+* _Class methods_ are called on the class itself. `new` is one.
+* _Instance methods_ are called on instances. Everything we've
+  defined so far with `def name ... end` has been an instance
+  method.
+
+Try to call an instance method on the class:
+
+[source,ruby]
+.pi-a.rb
+----
+class Knowledge
+  def pi
+    3.14
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './pi-a.rb'
+=> true
+>> Knowledge.pi
+NoMethodError: undefined method `pi' for Knowledge:Class
+----
+
+No luck — `pi` is an instance method. Create an instance first:
+
+[source,bash]
+----
+>> example = Knowledge.new
+=> #<Knowledge:0x007fe620010938>
+>> example.pi
+=> 3.14
+>> exit
+----
+
+Define a class method with `def self.name`:
+
+[source,ruby]
+.pi-b.rb
+----
+class Knowledge
+  def self.pi
+    3.14
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './pi-b.rb'
+=> true
+>> Knowledge.pi
+=> 3.14
+----
+
+And check that you can't reach this one from an instance:
+
+[source,bash]
+----
+>> example = Knowledge.new
+=> #<Knowledge:0x007fa8da045198>
+>> example.pi
+NoMethodError: undefined method `pi' for #<Knowledge:...>
+>> exit
+----
+
+There's an alternative, equivalent form using `class << self`:
+
+[source,ruby]
+----
+# Form 1 — def self.method_name
+class Knowledge
+  def self.pi
+    3.14
+  end
+end
+
+# Form 2 — class << self
+class Knowledge
+  class << self
+    def pi
+      3.14
+    end
+  end
+end
+----
+
+Both define a class method `pi`. Beginners usually stick to form 1.
+
+You can give a class method and an instance method the same name —
+they don't collide, because they live in different places. The
+code below defines `pi` as both, with different values:
+
+[source,ruby]
+.pi-c.rb
+----
+class Knowledge
+  def pi
+    3.14
+  end
+
+  def self.pi
+    3.14159265359
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './pi-c.rb'
+=> true
+>> Knowledge.pi
+=> 3.14159265359
+>> example = Knowledge.new
+>> example.pi
+=> 3.14
+>> exit
+----
+
+It works, but don't write code like this in production — the two
+different values for the same name will fool future readers.
+
+[[list-of-instance-methods]]
+== List of All Instance Methods
+
+`instance_methods` returns every method an instance responds to,
+including inherited ones:
+
+[source,bash]
+----
+$ irb
+>> load './pi-a.rb'
+=> true
+>> Knowledge.instance_methods.take(10)
+=> [:pi, :instance_of?, :kind_of?, :is_a?, :tap, :public_send,
+    :remove_instance_variable, :singleton_method,
+    :instance_variable_set, :define_singleton_method]
+>> exit
+----
+
+(The full list is long; we take the first ten.) Every class starts
+life with a basket of methods inherited from `Object`. To see only
+what _you_ defined, pass `false`:
+
+[source,bash]
+----
+>> Knowledge.instance_methods(false)
+=> [:pi]
+----
+
+[[to-s-for-own-classes]]
+== `to_s` for Your Own Classes
+
+`puts obj` prints an object by calling `obj.to_s` on it. Ruby's
+default `to_s` shows the class name and a memory address, which is
+rarely what you want. Define your own `to_s` to produce something
+useful:
+
+[source,ruby]
+.person-a.rb
+----
+class Person
+  def initialize(first_name, last_name)
+    @first_name = first_name
+    @last_name  = last_name
+  end
+
+  def to_s
+    "#{@first_name} #{@last_name}"
+  end
+end
+----
+
+[source,bash]
+----
+$ irb
+>> load './person-a.rb'
+=> true
+>> sw = Person.new('Stefan', 'Wintermeyer')
+=> #<Person:0x007fa95d030558 @first_name="Stefan", @last_name="Wintermeyer">
+>> puts sw
+Stefan Wintermeyer
+=> nil
+>> exit
+----
+
+Note that `irb`'s `=>` still shows the raw object. `puts`, `print`
+and string interpolation (`"Hi #{sw}"`) go through `to_s`.
+
+[[safe-navigation]]
+== Safe Navigation with `&.`
+
+Calling a method on `nil` raises a `NoMethodError`:
+
+[source,bash]
+----
+$ irb
+>> name = nil
+=> nil
+>> name.upcase
+NoMethodError (undefined method 'upcase' for nil)
+>> exit
+----
+
+Sometimes you expect a value to possibly be missing and you simply
+want the whole chain to shrug and return `nil`. The _safe
+navigation operator_ `&.` does exactly that: call the method if
+the receiver is not `nil`, otherwise return `nil`.
+
+[source,bash]
+----
+$ irb
+>> name = nil
+=> nil
+>> name&.upcase
+=> nil
+>> name = 'stefan'
+=> "stefan"
+>> name&.upcase
+=> "STEFAN"
+>> exit
+----
+
+This is very common in Rails, where database lookups routinely
+return `nil` for missing records:
+
+[source,ruby]
+----
+# without safe navigation
+if user && user.address && user.address.city
+  puts user.address.city
+end
+
+# with safe navigation
+puts user&.address&.city
+----
+
+The second form reads like a single thought and does not fall
+apart if any piece in the chain is missing.

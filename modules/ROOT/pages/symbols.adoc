@@ -1,0 +1,54 @@
+[[symbols]]
+= Symbols
+
+A _symbol_ is a name preceded by a colon: `:name`, `:red`,
+`:doors`. Symbols look a bit like strings, but they behave quite
+differently: for any given name, Ruby creates _exactly one_ symbol
+object and reuses it forever.
+
+[source,bash]
+----
+$ irb
+>> :example.class
+=> Symbol
+>> :example.object_id
+=> 1088668
+>> :example.object_id
+=> 1088668
+>> 'example'.object_id
+=> 70124141350360
+>> 'example'.object_id
+=> 70124141316700
+>> exit
+----
+
+The symbol `:example` keeps the same object id both times. The
+string `'example'` gets a fresh object each time. That is why
+symbols are cheap to compare and memory-friendly: Ruby only ever
+creates one of each.
+
+Symbols are the right tool whenever you need a _name_ rather than
+arbitrary text: hash keys, method names, option flags, state
+values. Strings are for data meant to be printed, edited or shown
+to the user.
+
+[source,bash]
+----
+$ irb
+>> colors = { black: '#000000', white: '#FFFFFF' }
+=> {:black=>"#000000", :white=>"#FFFFFF"}
+>> colors[:white]
+=> "#FFFFFF"
+>> exit
+----
+
+The hash above uses `:black` and `:white` as keys — names — and
+string values like `'#000000'` — actual data.
+
+You'll see symbols all over Rails:
+
+* Hash keys: `{ name: 'Ada', role: :admin }`.
+* Attribute declarations: `attr_reader :first_name, :last_name`.
+* Method arguments: `validates :email, presence: true`.
+
+If you want to find out more, `ri Symbol` lists the full API.

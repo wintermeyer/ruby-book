@@ -1,5 +1,12 @@
-[[if-condition]]
-= if-Condition
+[[conditionals]]
+= Conditionals
+
+A conditional runs a piece of code only when some expression
+is truthy. Ruby's main tools for that are `if` (with its
+friends `else` and `elsif`) and `case`.
+
+[[if]]
+== `if`
 
 An abstract `if`-condition looks like this:
 
@@ -10,12 +17,12 @@ if expression
 end
 ----
 
-The program between the expression and `end` is executed if the result
-of the expression is not `false` and not `nil`.
+The program between the expression and `end` runs if the
+result of the expression is not `false` and not `nil`.
 
 [NOTE]
 ====
-You can also use a `then` after the expression:
+You can also write `then` after the expression:
 
 [source,ruby]
 ----
@@ -25,8 +32,7 @@ end
 ----
 ====
 
-The construct for a simple `if`-branch in a Ruby program looks like the
-following example program:
+A concrete example:
 
 [source,ruby]
 ----
@@ -37,10 +43,10 @@ if a == 10
 end
 ----
 
-IMPORTANT: The `==` is used to compare two values.
-           Please don't mix it up with the single `=`.
+IMPORTANT: `==` compares two values. Do not mix it up with
+           the single `=`, which assigns.
 
-You can test an _expression_ really well in `irb`:
+You can try expressions out on their own in `irb`:
 
 [source,bash]
 ----
@@ -56,8 +62,7 @@ $
 [[shorthand]]
 == Shorthand
 
-A frequently used shorthand notation of an `if`-condition can be found
-in the following code:
+A frequently used one-line form of `if`:
 
 [source,ruby]
 ----
@@ -75,10 +80,9 @@ puts 'a is 10' if a == 10
 ----
 
 [[else]]
-== else
+== `else`
 
-You can probably imagine how this works, but for the sake of
-completeness, here is a little example:
+Nothing surprising here, but for completeness:
 
 [source,ruby]
 ----
@@ -92,9 +96,9 @@ end
 ----
 
 [[elsif]]
-== elsif
+== `elsif`
 
-Again, most programmers will know what this is all about. Example:
+`elsif` lets you check additional conditions after the first:
 
 [source,ruby]
 ----
@@ -107,77 +111,13 @@ elsif a == 20
 end
 ----
 
-[[logical-operators]]
-== Logical Operators
-
-So far the conditions in our examples have been simple: `a == 10`. In
-real code you often want to combine several conditions. Ruby gives you
-three operators for that:
-
-[cols="1,3"]
-|===
-| `&&` | _and_, true if both sides are true
-| `\|\|` | _or_, true if at least one side is true
-| `!`  | _not_, flips true into false and vice versa
-|===
-
-[source,bash]
-----
-$ irb
->> true && true
-=> true
->> true && false
-=> false
->> true || false
-=> true
->> !true
-=> false
->> exit
-----
-
-Used in an `if`:
-
-[source,ruby]
-----
-age = 20
-country = 'DE'
-
-if age >= 18 && country == 'DE'
-  puts 'may buy beer in Germany'
-end
-----
-
-A handy idiom: `||` returns the first value that is not `false` or
-`nil`. That lets you supply a default:
-
-[source,bash]
-----
-$ irb
->> name = nil
-=> nil
->> display_name = name || 'Anonymous'
-=> "Anonymous"
->> name = 'Stefan'
-=> "Stefan"
->> display_name = name || 'Anonymous'
-=> "Stefan"
->> exit
-----
-
-[NOTE]
-====
-Ruby also has `and`, `or` and `not` as word forms. They look
-friendlier but have a much lower precedence than `&&`, `||` and `!`,
-which makes them surprising in practice. The community convention is
-to stick with the symbol forms.
-====
-
 [[case-when]]
-== case / when
+== `case` / `when`
 
-A long chain of `if` / `elsif` / `elsif` works, but gets hard to read.
-`case` / `when` expresses the same idea more cleanly when you compare
-one value against many possibilities.
+A long chain of `if` / `elsif` / `elsif` works, but gets
+hard to read. `case` / `when` expresses the same idea more
+cleanly when you are comparing one value against many
+possibilities.
 
 [source,ruby]
 .traffic-light.rb
@@ -203,7 +143,8 @@ slow down
 $
 ----
 
-`case` returns a value too, so you can assign its result directly:
+`case` returns a value, so you can assign its result
+directly:
 
 [source,bash]
 ----
@@ -221,8 +162,8 @@ $ irb
 >> exit
 ----
 
-`when` is more powerful than plain equality. It also understands
-ranges and classes:
+`when` is more powerful than plain equality. It also
+understands ranges:
 
 [source,ruby]
 .grade.rb
@@ -246,56 +187,3 @@ $ ruby grade.rb
 C
 $
 ----
-
-[[safe-navigation]]
-== Safe Navigation with `&.`
-
-When you call a method on `nil`, Ruby raises a `NoMethodError`:
-
-[source,bash]
-----
-$ irb
->> name = nil
-=> nil
->> name.upcase
-NoMethodError (undefined method 'upcase' for nil)
->> exit
-----
-
-Sometimes you expect a value to possibly be missing and you simply
-want the whole chain to shrug and return `nil`. The _safe navigation
-operator_ `&.` does exactly that: call the method if the receiver is
-not `nil`, otherwise return `nil`.
-
-[source,bash]
-----
-$ irb
->> name = nil
-=> nil
->> name&.upcase
-=> nil
->> name = 'stefan'
-=> "stefan"
->> name&.upcase
-=> "STEFAN"
->> exit
-----
-
-This is very common in Rails, where database lookups routinely return
-`nil` for missing records:
-
-[source,ruby]
-----
-# without safe navigation
-if user && user.address && user.address.city
-  puts user.address.city
-end
-
-# with safe navigation
-puts user&.address&.city
-----
-
-The second form reads like a single thought and does not fall apart
-if any piece in the chain is missing.
-
-[[loops]]

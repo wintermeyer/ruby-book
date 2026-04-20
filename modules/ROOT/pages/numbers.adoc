@@ -1,0 +1,72 @@
+[[numbers]]
+= Numbers
+
+Ruby has two main numeric classes: `Integer` for whole numbers and
+`Float` for real (decimal) numbers. You rarely pick between them
+by hand — Ruby chooses based on how you write the literal.
+
+[[integers]]
+== Integers
+
+Any whole number, positive or negative, is an `Integer`. There is
+no separate "big integer" class — Ruby grows the representation
+automatically when the number gets large:
+
+[source,bash]
+----
+$ irb
+>> 23.class
+=> Integer
+>> 230000000000000000000.class
+=> Integer
+>> (23 * 10000).class
+=> Integer
+>> exit
+----
+
+[NOTE]
+====
+Older Ruby versions (before 2.4) had two integer classes, `Fixnum`
+and `Bignum`, and switched between them automatically. Today it's
+just `Integer` — one less thing to remember.
+====
+
+[[floats]]
+== Floats
+
+A `Float` represents a real number. The decimal separator is a
+point (`.`), never a comma:
+
+[source,bash]
+----
+$ irb
+>> a = 20.424
+=> 20.424
+>> a.class
+=> Float
+>> exit
+----
+
+[[mixed-class-calculations]]
+== Mixing Integers and Floats
+
+Adding two integers produces an integer. Mixing an integer with a
+float produces a float — Ruby promotes the less precise side:
+
+[source,bash]
+----
+$ irb
+>> a = 10
+=> 10
+>> b = 23
+=> 23
+>> (a + b).class
+=> Integer
+>> (a + 3.13).class
+=> Float
+>> exit
+----
+
+That means `5 / 2` is `2` (integer division), but `5 / 2.0` is
+`2.5`. A single `.0` on either side is enough to switch the whole
+calculation to float arithmetic.

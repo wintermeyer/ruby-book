@@ -1,0 +1,95 @@
+[[arrays]]
+= Arrays
+
+An _array_ is an ordered list of objects. The objects can be of
+any type — strings, numbers, even other arrays — and you can mix
+them freely. Arrays are one of the two workhorse collections in
+Ruby (the other being the
+xref:hashes.adoc[Hash]).
+
+The easy way to create an array is with square brackets:
+
+[source,bash]
+----
+$ irb
+>> a = [1, 2, 3, 4, 5]
+=> [1, 2, 3, 4, 5]
+>> a.class
+=> Array
+>> exit
+----
+
+Strings work just as well:
+
+[source,bash]
+----
+$ irb
+>> a = ['Test', 'Banana', 'blue']
+=> ["Test", "Banana", "blue"]
+>> a[1]
+=> "Banana"
+>> a[1].class
+=> String
+>> exit
+----
+
+And so does a mix. The array stores objects; it doesn't care what
+class they are:
+
+[source,bash]
+----
+$ irb
+>> a = [1, 2.2, 'House', nil]
+=> [1, 2.2, "House", nil]
+>> a[0].class
+=> Integer
+>> a[1].class
+=> Float
+>> a[2].class
+=> String
+>> a[3].class
+=> NilClass
+>> exit
+----
+
+You can also build an array with `Array.new` and grow it with
+`<<`:
+
+[source,bash]
+----
+$ irb
+>> a = Array.new
+=> []
+>> a << 'first item'
+=> ["first item"]
+>> a << 'second item'
+=> ["first item", "second item"]
+>> exit
+----
+
+[[iterator-each]]
+== Iterator `each`
+
+To visit each element of an array in turn, use `each`:
+
+[source,bash]
+----
+$ irb
+>> cart = ['eggs', 'butter']
+=> ["eggs", "butter"]
+>> cart.each do |item|
+?>   puts item
+>> end
+eggs
+butter
+=> ["eggs", "butter"]
+>> exit
+----
+
+`each` is the bread-and-butter iterator in Ruby. If you forget how
+it works, `ri Array.each` gives you the signature and a short
+example.
+
+You will see `each` everywhere in Rails — it's how Ruby programs
+tend to loop over collections rather than writing
+C-style `for` loops.
