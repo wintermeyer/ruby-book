@@ -55,6 +55,13 @@ bremen2. The runner fetches the wincon nav/footer (stamping
 `/var/www/ruby-book/releases/<ts>/`, and atomically swaps the
 `current` symlink. Nginx serves `/ruby/book/` from there.
 
+Before the swap the deploy pre-compresses every text asset
+(`.html`, `.css`, `.js`, `.svg`, `.xml`, `.json`, `.mjs`, `.txt`,
+`.map`) into `.br` (brotli q11) and `.gz` (gzip -9) siblings so
+nginx's `brotli_static` / `gzip_static` can serve the response
+without spending CPU on the hot path. The brotli module is
+already loaded site-wide on bremen2 via the wincon vhost.
+
 ## Where the content is edited
 
 In this repo, under `modules/ROOT/pages/*.adoc`. The Rails book no
